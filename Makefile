@@ -1,0 +1,23 @@
+BOOKS=alice christmas_carol dracula frankenstein heart_of_darkness life_of_bee moby_dick modest_propsal pride_and_prejudice tale_of_two_cities ulysses
+
+ALLBOOKS=$(BOOKS:%=results/%.txt)
+ALLFREQ=$(BOOKS:%=results/%.freq.txt)
+ALLSENT=$(BOOKS:%=results/%.sent.txt)
+
+
+all: $(ALLBOOKS) $(ALLFREQ) $(ALLSENT)
+
+clean:
+	rm -f results/*
+
+%.no_md.txt: %.txt
+	python3 src/remove_gutenberg_metadata.py $< $@
+
+results/%.txt: data/%.no_md.txt
+	src/all_books.sh $^ results/all.no_md.txt
+
+results/%.freq.txt: data/%.freq.txt
+	src/all_books.sh $^ results/all.freq.txt
+
+results/%.sent.txt: data/%.sent.txt
+	src/all_books.sh $^ results/all.sent.txt
